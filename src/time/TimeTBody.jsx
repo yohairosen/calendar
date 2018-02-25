@@ -65,6 +65,14 @@ const DateTBody = createReactClass({
             showWeekNumber, dateRender, disabledDate,
             hoverValue,
         } = props;
+
+
+
+        // value.add(1, 'day')
+
+
+
+
         let iIndex;
         let jIndex;
         let current;
@@ -84,49 +92,55 @@ const DateTBody = createReactClass({
         const disabledClass = `${prefixCls}-disabled-cell`;
         const firstDisableClass = `${prefixCls}-disabled-cell-first-of-row`;
         const lastDisableClass = `${prefixCls}-disabled-cell-last-of-row`;
-        const month1 = value.clone().local();
-        month1.startOf('day').startOf('minutes')
-        // value.utc()
-        // const day = month1.hour();
+        // value.add(1);
+        const month1 = value.clone().local()
+        month1.startOf('day').startOf('hour')
+        month1.day(0)//value.localeData().firstDayOfWeek());
+        // const day = month1.day();
         // const lastMonthDiffDay = (day + 7 - value.localeData().firstDayOfWeek()) % 7;
         // calculate last month
         const lastMonth1 = month1.clone();
-        // lastMonth1.add(0 - lastMonthDiffDay, 'hour');
+        // lastMonth1.add(0 - lastMonthDiffDay, 'days');
         let passed = 0;
         for (iIndex = 0; iIndex < DateConstants.DATE_ROW_COUNT; iIndex++) {
             for (jIndex = 0; jIndex < DateConstants.DATE_COL_COUNT; jIndex++) {
+                passed = jIndex //*  DateConstants.DATE_COL_COUNT;
                 current = lastMonth1;
                 if (passed) {
                     current = current.clone();
-                    current.add(passed, 'minutes');
+                    current.add(passed, 'days');
                 }
                 dateTable.push(current);
-                passed += 15;
             }
         }
         const tableHtml = [];
         passed = 0;
+        let mins = 15;
 
         for (iIndex = 0; iIndex < DateConstants.DATE_ROW_COUNT; iIndex++) {
             let isCurrentWeek;
             let weekNumberCell;
             let isActiveWeek = false;
             const dateCells = [];
-            if (showWeekNumber) {
-                weekNumberCell = (
-                    <td
-                        key={dateTable[passed].week()}
-                        role="gridcell"
-                        className={weekNumberCellClass}
-                    >
-                        {dateTable[passed].hour()}
-                    </td>
-                );
-            }
+            // if (showWeekNumber) {
+            //     weekNumberCell = (
+            //         <td
+            //             key={dateTable[passed].week()}
+            //             role="gridcell"
+            //             className={weekNumberCellClass}
+            //         >
+            //             {dateTable[passed].hour()}
+            //         </td>
+            //     );
+            // }
             for (jIndex = 0; jIndex < DateConstants.DATE_COL_COUNT; jIndex++) {
                 let next = null;
                 let last = null;
-                current = dateTable[passed];
+                current = dateTable[passed].clone()
+                // current.local()
+                // current.startOf('day').startOf('hour')
+                current.add(iIndex * mins, 'minutes');
+                // current = dateTable[passed];
                 if (jIndex < DateConstants.DATE_COL_COUNT - 1) {
                     next = dateTable[passed + 1];
                 }
@@ -142,8 +156,8 @@ const DateTBody = createReactClass({
                     isCurrentWeek = true;
                 }
 
-                const isBeforeCurrentMonthYear = beforeCurrentMonthYear(current, value);
-                const isAfterCurrentMonthYear = afterCurrentMonthYear(current, value);
+                const isBeforeCurrentMonthYear = false// beforeCurrentMonthYear(current, value);
+                const isAfterCurrentMonthYear = false//afterCurrentMonthYear(current, value);
 
                 if (selectedValue && Array.isArray(selectedValue)) {
                     const rangeValue = hoverValue.length ? hoverValue : selectedValue;
@@ -230,7 +244,9 @@ const DateTBody = createReactClass({
                         onMouseEnter={disabled ?
                             undefined : props.onDayHover && props.onDayHover.bind(null, current) || undefined}
                         role="gridcell"
-                        title={getTitleString(current)} className={cls}
+                        title={getTitleString(current)}
+                        className={cls}
+                        style={{width: `${100 / DateConstants.DATE_COL_COUNT}%`}}
                     >
                         {dateHtml}
                     </td>);
