@@ -23,8 +23,10 @@ const FullCalendar = createReactClass({
         headerComponents: PropTypes.array,
         headerComponent: PropTypes.object, // The whole header component
         headerRender: PropTypes.func,
+        dayHeadRenderer: PropTypes.func,
         showHeader: PropTypes.bool,
         disabledDate: PropTypes.func,
+        days: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.object)]),
     },
     mixins: [CommonMixin, CalendarMixin],
     getDefaultProps() {
@@ -83,6 +85,7 @@ const FullCalendar = createReactClass({
             headerComponent,
             headerRender,
             disabledDate,
+            days
         } = props;
         const {value, type} = this.state;
 
@@ -142,6 +145,8 @@ const FullCalendar = createReactClass({
                     prefixCls={prefixCls}
                     onSelect={this.onSelect}
                     value={value}
+                    days={days}
+                    dayHeadRenderer={props.dayHeadRenderer}
                     disabledDate={disabledDate}
                 />)
         }

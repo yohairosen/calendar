@@ -32,6 +32,10 @@ function onSelect(value) {
   console.log('select', value.format(format));
 }
 
+function getData(value) {
+
+}
+
 class Demo extends React.Component {
   state = {
     type: 'time',
@@ -42,31 +46,84 @@ class Demo extends React.Component {
       type,
     });
   }
+  headerRenderer = () => {
+    return <div>yay</div>
+  }
+
+  dateCellRender = (date, value, index) => {
+    if (index === 1 && date.isSameOrAfter('2018-02-25 13:00', 'minutes') && date.isSameOrBefore('2018-02-25 14:00', 'minutes')) {
+
+      return <div style={{
+        background: 'beige',
+        position: 'absolute',
+        bottom: -15,
+        left: 0,
+        right: 0,
+        top: -14,
+        zIndex: 1000
+
+
+      }}>
+<span style={{position: 'absolute', top: 5, left: 5}}>
+
+        {date.isSame('2018-02-25 13:00', 'minutes') ? 'Hair dresser' : ''}
+</span>
+
+      </div>
+    }
+
+    else  if (index === 2 && date.isSameOrAfter('2018-02-25 11:00', 'minutes') && date.isSameOrBefore('2018-02-25 11:30', 'minutes')) {
+
+      return <div style={{
+        background: 'pink',
+        position: 'absolute',
+        bottom: -15,
+        left: 0,
+        right: 0,
+        top: -14,
+        zIndex: 1000
+
+
+      }}>
+<span style={{position: 'absolute', top: 5, left: 5}}>
+
+        {date.isSame('2018-02-25 11:00', 'minutes') ? 'Wax machine' : ''}
+</span>
+
+      </div>
+    }
+    return false
+
+  }
 
   render() {
     return (
-      <div style={{ zIndex: 1000, position: 'relative', height:1000 }}>
+      <div style={{zIndex: 1000, position: 'relative', height: 1000}}>
         {/*<FullCalendar*/}
-          {/*style={{ margin: 10 }}*/}
-          {/*Select={Select}*/}
-          {/*fullscreen={false}*/}
-          {/*onSelect={onSelect}*/}
-          {/*defaultValue={now}*/}
-          {/*locale={cn ? zhCN : enUS}*/}
+        {/*style={{ margin: 10 }}*/}
+        {/*Select={Select}*/}
+        {/*fullscreen={false}*/}
+        {/*onSelect={onSelect}*/}
+        {/*defaultValue={now}*/}
+        {/*locale={cn ? zhCN : enUS}*/}
         {/*/>*/}
         <FullCalendar
-          style={{ margin: 10 }}
+          style={{margin: 10}}
           Select={Select}
           fullscreen
+          days={[moment(), moment(), moment()]}
+          dayHeadRenderer={this.headerRenderer}
+          dateCellRender={this.dateCellRender}
           defaultValue={now}
           onSelect={onSelect}
           type={this.state.type}
           onTypeChange={this.onTypeChange}
           locale={cn ? zhCN : enUS}
+          selectedValue={[now.clone().subtract(10, 'day'), now.clone()]}
         />
       </div>
     );
   }
 }
 
-ReactDOM.render(<Demo />, document.getElementById('__react-content'));
+ReactDOM.render(<Demo/>, document.getElementById('__react-content'));

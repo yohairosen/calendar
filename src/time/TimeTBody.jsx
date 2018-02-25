@@ -40,7 +40,7 @@ function getIdFromDate(date) {
     return `rc-calendar-${date.year()}-${date.month()}-${date.date()}`;
 }
 
-const DateTBody = createReactClass({
+const TimeTBody = createReactClass({
     propTypes: {
         contentRender: PropTypes.func,
         dateRender: PropTypes.func,
@@ -50,6 +50,9 @@ const DateTBody = createReactClass({
         value: PropTypes.object,
         hoverValue: PropTypes.any,
         showWeekNumber: PropTypes.bool,
+        numColumns: PropTypes.number,
+        days: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.object)])
+
     },
 
     getDefaultProps() {
@@ -63,14 +66,11 @@ const DateTBody = createReactClass({
         const {
             contentRender, prefixCls, selectedValue, value,
             showWeekNumber, dateRender, disabledDate,
-            hoverValue,
+            hoverValue, days, numColumns
         } = props;
 
 
-
         // value.add(1, 'day')
-
-
 
 
         let iIndex;
@@ -101,15 +101,26 @@ const DateTBody = createReactClass({
         // calculate last month
         const lastMonth1 = month1.clone();
         // lastMonth1.add(0 - lastMonthDiffDay, 'days');
+
+        let getNextDay = (i) => {
+
+            const fn = Array.isArray(days) ?
+                i => days[i].clone().startOf('day').startOf('hour') :
+                i => {
+                    let day = lastMonth1.clone().startOf('day').startOf('hour');
+                    day.add(i, 'days');
+                    return day;
+                };
+
+            getNextDay = fn;
+
+            return fn(i);
+        };
+
         let passed = 0;
         for (iIndex = 0; iIndex < DateConstants.DATE_ROW_COUNT; iIndex++) {
-            for (jIndex = 0; jIndex < DateConstants.DATE_COL_COUNT; jIndex++) {
-                passed = jIndex //*  DateConstants.DATE_COL_COUNT;
-                current = lastMonth1;
-                if (passed) {
-                    current = current.clone();
-                    current.add(passed, 'days');
-                }
+            for (jIndex = 0; jIndex < numColumns; jIndex++) {
+                current = getNextDay(jIndex);
                 dateTable.push(current);
             }
         }
@@ -133,7 +144,7 @@ const DateTBody = createReactClass({
             //         </td>
             //     );
             // }
-            for (jIndex = 0; jIndex < DateConstants.DATE_COL_COUNT; jIndex++) {
+            for (jIndex = 0; jIndex < numColumns; jIndex++) {
                 let next = null;
                 let last = null;
                 current = dateTable[passed].clone()
@@ -141,7 +152,7 @@ const DateTBody = createReactClass({
                 // current.startOf('day').startOf('hour')
                 current.add(iIndex * mins, 'minutes');
                 // current = dateTable[passed];
-                if (jIndex < DateConstants.DATE_COL_COUNT - 1) {
+                if (jIndex < numColumns - 1) {
                     next = dateTable[passed + 1];
                 }
                 if (jIndex > 0) {
@@ -222,8 +233,9 @@ const DateTBody = createReactClass({
                 }
 
                 let dateHtml;
-                if (dateRender) {
-                    dateHtml = dateRender(current, value);
+                if (dateRender && dateRender(current, value, jIndex)) {
+                    console.log(jIndex)
+                    dateHtml = dateRender(current, value, jIndex);
                 } else {
                     const content = contentRender ? contentRender(current, value) : current.format('HH:mm');
                     dateHtml = (
@@ -246,7 +258,7 @@ const DateTBody = createReactClass({
                         role="gridcell"
                         title={getTitleString(current)}
                         className={cls}
-                        style={{width: `${100 / DateConstants.DATE_COL_COUNT}%`}}
+                        style={{width: `${100 / numColumns}%`}}
                     >
                         {dateHtml}
                     </td>);
@@ -268,10 +280,10 @@ const DateTBody = createReactClass({
                     {dateCells}
                 </tr>);
         }
-        return (<tbody className={`${prefixCls}-tbody`}>
+        return (<tbody className={`${prefixCls}-time-tbody`}>
         {tableHtml}
         </tbody>);
     },
 });
 
-export default DateTBody;
+export default TimeTBody;
