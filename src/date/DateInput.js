@@ -46,6 +46,7 @@ const DateInput = createReactClass({
   },
 
   onInputChange(event) {
+    console.log('yay')
     const str = event.target.value;
     this.setState({
       str,

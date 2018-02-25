@@ -34,7 +34,7 @@ function onSelect(value) {
 
 class Demo extends React.Component {
   state = {
-    type: 'month',
+    type: 'time',
   };
 
   onTypeChange = (type) => {
@@ -45,15 +45,15 @@ class Demo extends React.Component {
 
   render() {
     return (
-      <div style={{ zIndex: 1000, position: 'relative' }}>
-        <FullCalendar
-          style={{ margin: 10 }}
-          Select={Select}
-          fullscreen={false}
-          onSelect={onSelect}
-          defaultValue={now}
-          locale={cn ? zhCN : enUS}
-        />
+      <div style={{ zIndex: 1000, position: 'relative', height:1000 }}>
+        {/*<FullCalendar*/}
+          {/*style={{ margin: 10 }}*/}
+          {/*Select={Select}*/}
+          {/*fullscreen={false}*/}
+          {/*onSelect={onSelect}*/}
+          {/*defaultValue={now}*/}
+          {/*locale={cn ? zhCN : enUS}*/}
+        {/*/>*/}
         <FullCalendar
           style={{ margin: 10 }}
           Select={Select}
