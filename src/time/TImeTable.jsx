@@ -1,7 +1,7 @@
 import React from 'react';
 import TimeTHead from './TimeTHead';
 import TimeTBody from './TimeTBody';
-import DateConstants from "./DateConstants";
+import DateConstants from "./TimeConstants";
 
 export default class TimeTable extends React.Component {
     render() {
@@ -9,7 +9,7 @@ export default class TimeTable extends React.Component {
 
         const days = props.days;
         const prefixCls = props.prefixCls;
-        const numColumns = Array.isArray(days) ? days.length : (days || DateConstants.DATE_COL_COUNT);
+        const numColumns = Array.isArray(days) ? days.length : (days || DateConstants.WEEK_DAYS_COUNT);
 
         return (<table className={`${prefixCls}-table`} cellSpacing="0" role="grid">
             <TimeTHead {...props} numColumns={numColumns}/>

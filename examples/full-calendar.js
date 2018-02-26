@@ -46,12 +46,12 @@ class Demo extends React.Component {
       type,
     });
   }
-  headerRenderer = () => {
+  headerRender = () => {
     return <div>yay</div>
   }
 
   dateCellRender = (date, value, index) => {
-    if (index === 1 && date.isSameOrAfter('2018-02-25 13:00', 'minutes') && date.isSameOrBefore('2018-02-25 14:00', 'minutes')) {
+    if (index === 1 && date.isSameOrAfter('2018-02-26 13:00', 'minutes') && date.isSameOrBefore('2018-02-26 14:00', 'minutes')) {
 
       return <div style={{
         background: 'beige',
@@ -66,13 +66,13 @@ class Demo extends React.Component {
       }}>
 <span style={{position: 'absolute', top: 5, left: 5}}>
 
-        {date.isSame('2018-02-25 13:00', 'minutes') ? 'Hair dresser' : ''}
+        {date.isSame('2018-02-26 13:00', 'minutes') ? 'Hair dresser' : ''}
 </span>
 
       </div>
     }
 
-    else  if (index === 2 && date.isSameOrAfter('2018-02-25 11:00', 'minutes') && date.isSameOrBefore('2018-02-25 11:30', 'minutes')) {
+    else  if (index === 2 && date.isSameOrAfter('2018-02-26 11:00', 'minutes') && date.isSameOrBefore('2018-02-26 11:30', 'minutes')) {
 
       return <div style={{
         background: 'pink',
@@ -87,7 +87,7 @@ class Demo extends React.Component {
       }}>
 <span style={{position: 'absolute', top: 5, left: 5}}>
 
-        {date.isSame('2018-02-25 11:00', 'minutes') ? 'Wax machine' : ''}
+        {date.isSame('2018-02-26 11:00', 'minutes') ? 'Wax machine' : ''}
 </span>
 
       </div>
@@ -112,8 +112,8 @@ class Demo extends React.Component {
           Select={Select}
           fullscreen
           days={[moment(), moment(), moment()]}
-          dayHeadRenderer={this.headerRenderer}
-          dateCellRender={this.dateCellRender}
+          dayHeadRender={this.headerRender}
+          timeCellRender={this.dateCellRender}
           defaultValue={now}
           onSelect={onSelect}
           type={this.state.type}

@@ -18,12 +18,13 @@ const FullCalendar = createReactClass({
         fullscreen: PropTypes.bool,
         monthCellRender: PropTypes.func,
         dateCellRender: PropTypes.func,
+        timeCellRender: PropTypes.func,
+        dayHeadRender: PropTypes.func,
         showTypeSwitch: PropTypes.bool,
         Select: PropTypes.func.isRequired,
         headerComponents: PropTypes.array,
         headerComponent: PropTypes.object, // The whole header component
         headerRender: PropTypes.func,
-        dayHeadRenderer: PropTypes.func,
         showHeader: PropTypes.bool,
         disabledDate: PropTypes.func,
         days: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.object)]),
@@ -139,15 +140,16 @@ const FullCalendar = createReactClass({
         else if (type === 'time') {
             table = (
                 <TimeTable
-                    dateRender={props.dateCellRender}
+                    timeRender={props.timeCellRender}
                     contentRender={props.dateCellContentRender}
                     locale={locale}
                     prefixCls={prefixCls}
                     onSelect={this.onSelect}
                     value={value}
-                    days={days}
-                    dayHeadRenderer={props.dayHeadRenderer}
                     disabledDate={disabledDate}
+
+                    days={days}
+                    dayHeadRender={props.dayHeadRender}
                 />)
         }
 

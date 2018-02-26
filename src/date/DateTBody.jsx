@@ -82,7 +82,7 @@ const DateTBody = createReactClass({
     lastMonth1.add(0 - lastMonthDiffDay, 'days');
     let passed = 0;
     for (iIndex = 0; iIndex < DateConstants.DATE_ROW_COUNT; iIndex++) {
-      for (jIndex = 0; jIndex < DateConstants.DATE_COL_COUNT; jIndex++) {
+      for (jIndex = 0; jIndex < DateConstants.WEEK_DAYS_COUNT; jIndex++) {
         current = lastMonth1;
         if (passed) {
           current = current.clone();
@@ -111,11 +111,11 @@ const DateTBody = createReactClass({
           </td>
         );
       }
-      for (jIndex = 0; jIndex < DateConstants.DATE_COL_COUNT; jIndex++) {
+      for (jIndex = 0; jIndex < DateConstants.WEEK_DAYS_COUNT; jIndex++) {
         let next = null;
         let last = null;
         current = dateTable[passed];
-        if (jIndex < DateConstants.DATE_COL_COUNT - 1) {
+        if (jIndex < DateConstants.WEEK_DAYS_COUNT - 1) {
           next = dateTable[passed + 1];
         }
         if (jIndex > 0) {

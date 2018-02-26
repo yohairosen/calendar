@@ -14,8 +14,8 @@ class DateTHead extends React.Component {
     const firstDayOfWeek = localeData.firstDayOfWeek();
     let showWeekNumberEl;
     const now = moment();
-    for (let dateColIndex = 0; dateColIndex < DateConstants.DATE_COL_COUNT; dateColIndex++) {
-      const index = (firstDayOfWeek + dateColIndex) % DateConstants.DATE_COL_COUNT;
+    for (let dateColIndex = 0; dateColIndex < DateConstants.WEEK_DAYS_COUNT; dateColIndex++) {
+      const index = (firstDayOfWeek + dateColIndex) % DateConstants.WEEK_DAYS_COUNT;
       now.day(index);
       veryShortWeekdays[dateColIndex] = localeData.weekdaysMin(now);
       weekDays[dateColIndex] = localeData.weekdaysShort(now);

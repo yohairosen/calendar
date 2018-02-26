@@ -13,13 +13,17 @@ const defaultDisabledTime = {
 };
 
 export function getTodayTime(value) {
-  const today = moment()//.add(1, 'day');
-  // today.locale(value.locale()).utcOffset(value.utcOffset());
-  return today
+  const today = moment();
+  today.locale(value.locale()).utcOffset(value.utcOffset());
+  return today;
 }
 
 export function getTitleString(value) {
   return value.format('LL');
+}
+
+export function getTimeTitleString(value) {
+  return value.format('LL HH:mm');
 }
 
 export function getTodayTimeStr(value) {
@@ -31,6 +35,13 @@ export function getMonthName(month) {
   const locale = month.locale();
   const localeData = month.localeData();
   return localeData[locale === 'zh-cn' ? 'months' : 'monthsShort'](month);
+}
+
+
+export function getNearestInterval(value, interval) {
+  const today = moment();
+  today.locale(value.locale()).utcOffset(value.utcOffset());
+  return today;
 }
 
 export function syncTime(from, to) {

@@ -2,38 +2,34 @@ import React from 'react';
 import createReactClass from 'create-react-class';
 import PropTypes from 'prop-types';
 import cx from 'classnames';
-import DateConstants from './DateConstants';
-import {getTitleString, getTodayTime} from '../util/';
+import TimeConstants from './TimeConstants';
+import {getTimeTitleString, getTodayTime} from '../util/';
 import moment from 'moment';
 
-function isSameDay(one, two) {
-    return one && two && one.isSame(two, 'minutes');
-}
 
-function nearestPastMinutes(interval, someMoment) {
-    const roundedMinutes = Math.floor(someMoment.minute() / interval) * interval;
-    return someMoment.clone().minute(roundedMinutes).second(0);
+function nearestPastMinutes(interval, date) {
+    const roundedMinutes = Math.floor(date.minute() / interval) * interval;
+    return date.clone().minute(roundedMinutes).second(0);
 }
-
 
 function isNow(one, two) {
     return one && two && one.isSame(two, 'minutes')
 }
 
-function beforeCurrentMonthYear(current, today) {
-    if (current.year() < today.year()) {
+function beforeCurrentDayWeek(current, today) {
+    if (current.week() < today.week()) {
         return 1;
     }
-    return current.year() === today.year() &&
-        current.month() < today.month();
+    return current.week() === today.week() &&
+        current.day() < today.day();
 }
 
-function afterCurrentMonthYear(current, today) {
-    if (current.year() > today.year()) {
+function afterCurrentDayWeek(current, today) {
+    if (current.week() > today.week()) {
         return 1;
     }
-    return current.year() === today.year() &&
-        current.month() > today.month();
+    return current.week() === today.week() &&
+        current.day() > today.day();
 }
 
 function getIdFromDate(date) {
@@ -41,10 +37,10 @@ function getIdFromDate(date) {
 }
 
 
-function getScrollToTime(tbody, time) {
+function getScrollToTime(tbody, time, timeInterval) {
     let start = moment().startOf('day').startOf('hour');
 
-    let diff = time.diff(start, 'minutes') / 15;
+    let diff = time.diff(start, 'minutes') / timeInterval;
 
     let viewPortHeight = tbody.clientHeight;
     let height = tbody.rows[0].clientHeight;
@@ -58,26 +54,29 @@ function getScrollToTime(tbody, time) {
 const TimeTBody = createReactClass({
     propTypes: {
         contentRender: PropTypes.func,
-        dateRender: PropTypes.func,
-        disabledDate: PropTypes.func,
+        timeRender: PropTypes.func,
+        disabledTime: PropTypes.func,
         prefixCls: PropTypes.string,
         selectedValue: PropTypes.oneOfType([PropTypes.object, PropTypes.arrayOf(PropTypes.object)]),
         value: PropTypes.object,
         hoverValue: PropTypes.any,
-        showWeekNumber: PropTypes.bool,
+        // showWeekNumber: PropTypes.bool,
         numColumns: PropTypes.number,
-        days: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.object)])
+        days: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.object)]),
+        timeInterval: PropTypes.number
 
     },
 
     componentDidMount() {
-        let now = nearestPastMinutes(15, moment());
-        this.tbody.scrollTop = getScrollToTime(this.tbody, now);
+        const {timeInterval} = this.props;
+        let now = nearestPastMinutes(timeInterval, moment());
+        this.tbody.scrollTop = getScrollToTime(this.tbody, now, timeInterval);
     },
 
     getDefaultProps() {
         return {
             hoverValue: [],
+            timeInterval: 15
         };
     },
 
@@ -85,49 +84,39 @@ const TimeTBody = createReactClass({
         const props = this.props;
         const {
             contentRender, prefixCls, selectedValue, value,
-            showWeekNumber, dateRender, disabledDate,
-            hoverValue, days, numColumns
+            timeRender, disabledTime,
+            hoverValue, days, numColumns, timeInterval
         } = props;
 
-
-        // value.add(1, 'day')
-
-
+        let rowCount = 24 * 60 / timeInterval;
         let iIndex;
         let jIndex;
         let current;
         const dateTable = [];
-        const today = nearestPastMinutes(15, getTodayTime(value))
+        const now = nearestPastMinutes(timeInterval, getTodayTime(value))
         const cellClass = `${prefixCls}-cell`;
-        const weekNumberCellClass = `${prefixCls}-week-number-cell`;
-        const dateClass = `${prefixCls}-time`;
-        const todayClass = `${prefixCls}-today`;
-        const selectedClass = `${prefixCls}-selected-day`;
-        const selectedDateClass = `${prefixCls}-selected-date`;  // do not move with mouse operation
-        const selectedStartDateClass = `${prefixCls}-selected-start-date`;
-        const selectedEndDateClass = `${prefixCls}-selected-end-date`;
+        // const weekNumberCellClass = `${prefixCls}-week-number-cell`;
+        const timeClass = `${prefixCls}-time`;
+        const nowClass = `${prefixCls}-now`;
+        const selectedClass = `${prefixCls}-selected-now`;
+        const selectedTimeClass = `${prefixCls}-selected-time`;  // do not move with mouse operation
+        const selectedStartTimeClass = `${prefixCls}-selected-start-time`;
+        const selectedEndTimeClass = `${prefixCls}-selected-end-time`;
         const inRangeClass = `${prefixCls}-in-range-cell`;
-        const lastMonthDayClass = `${prefixCls}-last-month-cell`;
-        const nextMonthDayClass = `${prefixCls}-next-month-btn-day`;
         const disabledClass = `${prefixCls}-disabled-cell`;
         const firstDisableClass = `${prefixCls}-disabled-cell-first-of-row`;
         const lastDisableClass = `${prefixCls}-disabled-cell-last-of-row`;
-        // value.add(1);
-        const month1 = value.clone().local()
-        month1.startOf('day').startOf('hour')
-        month1.day(0)//value.localeData().firstDayOfWeek());
-        // const day = month1.day();
-        // const lastMonthDiffDay = (day + 7 - value.localeData().firstDayOfWeek()) % 7;
-        // calculate last month
-        const lastMonth1 = month1.clone();
-        // lastMonth1.add(0 - lastMonthDiffDay, 'days');
+
+        const firstDay = value.clone().local();
+        firstDay.startOf('week');
+
 
         let getNextDay = (i) => {
 
             const fn = Array.isArray(days) ?
                 i => days[i].clone().startOf('day').startOf('hour') :
                 i => {
-                    let day = lastMonth1.clone().startOf('day').startOf('hour');
+                    let day = firstDay.clone().startOf('day').startOf('hour');
                     day.add(i, 'days');
                     return day;
                 };
@@ -138,7 +127,7 @@ const TimeTBody = createReactClass({
         };
 
         let passed = 0;
-        for (iIndex = 0; iIndex < DateConstants.DATE_ROW_COUNT; iIndex++) {
+        for (iIndex = 0; iIndex < rowCount; iIndex++) {
             for (jIndex = 0; jIndex < numColumns; jIndex++) {
                 current = getNextDay(jIndex);
                 dateTable.push(current);
@@ -146,14 +135,13 @@ const TimeTBody = createReactClass({
         }
         const tableHtml = [];
         passed = 0;
-        let mins = 15;
 
-        for (iIndex = 0; iIndex < DateConstants.DATE_ROW_COUNT; iIndex++) {
-            let isCurrentWeek;
-            let weekNumberCell;
-            let isActiveWeek = false;
+        for (iIndex = 0; iIndex < rowCount; iIndex++) {
+            let isCurrentTime;
+            // let weekNumberCell;
+            let isActiveTime = false;
             const dateCells = [];
-            // if (showWeekNumber) {
+            // if (showWeekNumber) { //can be used for time side bar later on
             //     weekNumberCell = (
             //         <td
             //             key={dateTable[passed].week()}
@@ -167,48 +155,45 @@ const TimeTBody = createReactClass({
             for (jIndex = 0; jIndex < numColumns; jIndex++) {
                 let next = null;
                 let last = null;
-                current = dateTable[passed].clone()
-                // current.local()
-                // current.startOf('day').startOf('hour')
-                current.add(iIndex * mins, 'minutes');
-                // current = dateTable[passed];
+                current = dateTable[jIndex].clone()
+                current.add(iIndex * timeInterval, 'minutes');
                 if (jIndex < numColumns - 1) {
-                    next = dateTable[passed + 1];
+                    next = dateTable[jIndex + 1];
                 }
                 if (jIndex > 0) {
-                    last = dateTable[passed - 1];
+                    last = dateTable[jIndex - 1];
                 }
                 let cls = cellClass;
                 let disabled = false;
                 let selected = false;
 
-                if (isNow(current, today)) {
-                    cls += ` ${todayClass}`;
-                    isCurrentWeek = true;
+                if (isNow(current, now)) {
+                    cls += ` ${nowClass}`;
+                    isCurrentTime = true;
                 }
 
-                const isBeforeCurrentMonthYear = false// beforeCurrentMonthYear(current, value);
-                const isAfterCurrentMonthYear = false//afterCurrentMonthYear(current, value);
+                const isBeforeCurrentDayWeek = beforeCurrentDayWeek(current, value);
+                const isAfterCurrentDayWeek = afterCurrentDayWeek(current, value);
 
                 if (selectedValue && Array.isArray(selectedValue)) {
                     const rangeValue = hoverValue.length ? hoverValue : selectedValue;
-                    if (!isBeforeCurrentMonthYear && !isAfterCurrentMonthYear) {
+                    if (!isBeforeCurrentDayWeek && !isAfterCurrentDayWeek) {
                         const startValue = rangeValue[0];
                         const endValue = rangeValue[1];
                         if (startValue) {
-                            if (isSameDay(current, startValue)) {
+                            if (isNow(current, startValue)) {
                                 selected = true;
-                                isActiveWeek = true;
-                                cls += ` ${selectedStartDateClass}`;
+                                isActiveTime = true;
+                                cls += ` ${selectedStartTimeClass}`;
                             }
                         }
                         if (startValue && endValue) {
-                            if (isSameDay(current, endValue)) {
+                            if (isNow(current, endValue)) {
                                 selected = true;
-                                isActiveWeek = true;
-                                cls += ` ${selectedEndDateClass}`;
-                            } else if (current.isAfter(startValue, 'day') &&
-                                current.isBefore(endValue, 'day')) {
+                                isActiveTime = true;
+                                cls += ` ${selectedEndTimeClass}`;
+                            } else if (current.isAfter(startValue, 'minutes') &&
+                                current.isBefore(endValue, 'minutes')) {
                                 cls += ` ${inRangeClass}`;
                             }
                         }
@@ -216,29 +201,23 @@ const TimeTBody = createReactClass({
                 } else if (isNow(current, value)) {
                     // keyboard change value, highlight works
                     selected = true;
-                    isActiveWeek = true;
+                    isActiveTime = true;
                 }
 
                 if (isNow(current, selectedValue)) {
-                    cls += ` ${selectedDateClass}`;
+                    cls += ` ${selectedTimeClass}`;
                 }
 
-                if (isBeforeCurrentMonthYear) {
-                    cls += ` ${lastMonthDayClass}`;
-                }
-                if (isAfterCurrentMonthYear) {
-                    cls += ` ${nextMonthDayClass}`;
-                }
 
-                if (disabledDate) {
-                    if (disabledDate(current, value)) {
+                if (disabledTime) {
+                    if (disabledTime(current, value)) {
                         disabled = true;
 
-                        if (!last || !disabledDate(last, value)) {
+                        if (!last || !disabledTime(last, value)) {
                             cls += ` ${firstDisableClass}`;
                         }
 
-                        if (!next || !disabledDate(next, value)) {
+                        if (!next || !disabledTime(next, value)) {
                             cls += ` ${lastDisableClass}`;
                         }
                     }
@@ -253,15 +232,14 @@ const TimeTBody = createReactClass({
                 }
 
                 let dateHtml;
-                if (dateRender && dateRender(current, value, jIndex)) {
-                    console.log(jIndex)
-                    dateHtml = dateRender(current, value, jIndex);
+                if (timeRender && timeRender(current, value, jIndex)) {
+                    dateHtml = timeRender(current, value, jIndex);
                 } else {
                     const content = contentRender ? contentRender(current, value) : current.format('HH:mm');
                     dateHtml = (
                         <div
                             key={getIdFromDate(current)}
-                            className={dateClass}
+                            className={timeClass}
                             aria-selected={selected}
                             aria-disabled={disabled}
                         >
@@ -276,7 +254,7 @@ const TimeTBody = createReactClass({
                         onMouseEnter={disabled ?
                             undefined : props.onDayHover && props.onDayHover.bind(null, current) || undefined}
                         role="gridcell"
-                        title={getTitleString(current)}
+                        title={getTimeTitleString(current)}
                         className={cls}
                         style={{width: `${100 / numColumns}%`}}
                     >
@@ -292,11 +270,11 @@ const TimeTBody = createReactClass({
                     key={iIndex}
                     role="row"
                     className={cx(`${prefixCls}-row`, {
-                        [`${prefixCls}-current-week`]: isCurrentWeek,
-                        [`${prefixCls}-active-week`]: isActiveWeek,
+                        [`${prefixCls}-current-time`]: isCurrentTime,
+                        [`${prefixCls}-active-time`]: isActiveTime,
                     })}
                 >
-                    {weekNumberCell}
+                    {/*{weekNumberCell}*/}
                     {dateCells}
                 </tr>);
         }

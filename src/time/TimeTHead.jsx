@@ -8,10 +8,10 @@ export default class TimeTHead extends React.Component {
         const numColumns = props.numColumns;
         const localeData = value.localeData();
         const prefixCls = props.prefixCls;
-        const dayHeadRenderer = props.dayHeadRenderer;
+        const dayHeadRender = props.dayHeadRender;
         const veryShortWeekdays = [];
         const weekDays = [];
-        const firstDayOfWeek = 0// localeData.firstDayOfWeek();
+        const firstDayOfWeek = localeData.firstDayOfWeek();
         let showWeekNumberEl;
         const now = moment();
 
@@ -32,7 +32,7 @@ export default class TimeTHead extends React.Component {
                 </th>);
         }
 
-        const weekDaysEls = weekDays.map((day, xindex) =>
+        const headerEls = weekDays.map((day, xindex) =>
             <th
                 key={xindex}
                 role="columnheader"
@@ -41,7 +41,7 @@ export default class TimeTHead extends React.Component {
             >
           <span className={`${prefixCls}-column-header-inner`}>
           
-              {dayHeadRenderer && dayHeadRenderer(day, xindex) || veryShortWeekdays[xindex]}
+              {dayHeadRender && dayHeadRender(day, xindex) || veryShortWeekdays[xindex]}
                
               
           </span>
@@ -51,7 +51,7 @@ export default class TimeTHead extends React.Component {
         return (<thead>
         <tr role="row">
             {showWeekNumberEl}
-            {weekDaysEls}
+            {headerEls}
         </tr>
         </thead>);
     }
