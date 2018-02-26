@@ -63,11 +63,6 @@ const FullCalendar = createReactClass({
             target: 'month',
         });
     },
-    onTimeSelect(value) {
-        this.onSelect(value, {
-            target: 'time',
-        });
-    },
     setType(type) {
         if (!('type' in this.props)) {
             this.setState({
@@ -137,7 +132,7 @@ const FullCalendar = createReactClass({
                 />)
 
         }
-        else if (type === 'time') {
+        else if (type === 'day' || type === 'week' || type === 'time') {
             table = (
                 <TimeTable
                     timeRender={props.timeCellRender}
@@ -147,8 +142,7 @@ const FullCalendar = createReactClass({
                     onSelect={this.onSelect}
                     value={value}
                     disabledDate={disabledDate}
-
-                    days={days}
+                    days={days || type === 'week' ? 7 : 1}
                     dayHeadRender={props.dayHeadRender}
                 />)
         }

@@ -38,10 +38,11 @@ function getData(value) {
 
 class Demo extends React.Component {
   state = {
-    type: 'time',
+    type: 'week',
   };
 
   onTypeChange = (type) => {
+
     this.setState({
       type,
     });
@@ -72,7 +73,7 @@ class Demo extends React.Component {
       </div>
     }
 
-    else  if (index === 2 && date.isSameOrAfter('2018-02-26 11:00', 'minutes') && date.isSameOrBefore('2018-02-26 11:30', 'minutes')) {
+    else if (index === 2 && date.isSameOrAfter('2018-02-26 11:00', 'minutes') && date.isSameOrBefore('2018-02-26 11:30', 'minutes')) {
 
       return <div style={{
         background: 'pink',
@@ -98,7 +99,9 @@ class Demo extends React.Component {
 
   render() {
     return (
-      <div style={{zIndex: 1000, position: 'relative', height: 1000}}>
+      <div style={this.state.type === 'week' || this.state.type === 'day' ?
+        {zIndex: 1000, position: 'relative', height: 800} : {zIndex: 1000, position: 'relative'}
+      }>
         {/*<FullCalendar*/}
         {/*style={{ margin: 10 }}*/}
         {/*Select={Select}*/}
@@ -111,9 +114,9 @@ class Demo extends React.Component {
           style={{margin: 10}}
           Select={Select}
           fullscreen
-          days={[moment(), moment(), moment()]}
-          dayHeadRender={this.headerRender}
-          timeCellRender={this.dateCellRender}
+          // days={[moment(), moment(), moment()]}
+          // dayHeadRender={this.headerRender}
+          // timeCellRender={this.dateCellRender}
           defaultValue={now}
           onSelect={onSelect}
           type={this.state.type}
