@@ -40,6 +40,21 @@ function getIdFromDate(date) {
     return `rc-calendar-${date.year()}-${date.month()}-${date.date()}`;
 }
 
+
+function getScrollToTime(tbody, time) {
+    let start = moment().startOf('day').startOf('hour');
+
+    let diff = time.diff(start, 'minutes') / 15;
+
+    let viewPortHeight = tbody.clientHeight;
+    let height = tbody.rows[0].clientHeight;
+
+    let distanceToMiddle = Math.round(viewPortHeight / height / 2) * height;
+
+    return height * diff - distanceToMiddle;
+
+}
+
 const TimeTBody = createReactClass({
     propTypes: {
         contentRender: PropTypes.func,
@@ -53,6 +68,11 @@ const TimeTBody = createReactClass({
         numColumns: PropTypes.number,
         days: PropTypes.oneOfType([PropTypes.number, PropTypes.arrayOf(PropTypes.object)])
 
+    },
+
+    componentDidMount() {
+        let now = nearestPastMinutes(15, moment());
+        this.tbody.scrollTop = getScrollToTime(this.tbody, now);
     },
 
     getDefaultProps() {
@@ -280,9 +300,15 @@ const TimeTBody = createReactClass({
                     {dateCells}
                 </tr>);
         }
-        return (<tbody className={`${prefixCls}-time-tbody`}>
+
+
+        let tBody = (<tbody ref={tbody => this.tbody = tbody}
+                            className={`${prefixCls}-time-tbody`}>
         {tableHtml}
         </tbody>);
+
+
+        return tBody;
     },
 });
 
