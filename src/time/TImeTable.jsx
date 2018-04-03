@@ -9,7 +9,9 @@ export default class TimeTable extends React.Component {
 
         const days = props.days;
         const prefixCls = props.prefixCls;
+        console.log(days)
         const numColumns = Array.isArray(days) ? days.length : (days || DateConstants.WEEK_DAYS_COUNT);
+
 
         return (<table className={`${prefixCls}-table`} cellSpacing="0" role="grid">
             <TimeTHead {...props} numColumns={numColumns}/>

@@ -84,7 +84,7 @@ const FullCalendar = createReactClass({
             days
         } = props;
         const {value, type} = this.state;
-
+console.log(days)
         let header = null;
         if (showHeader) {
             if (headerRender) {
@@ -142,7 +142,7 @@ const FullCalendar = createReactClass({
                     onSelect={this.onSelect}
                     value={value}
                     disabledDate={disabledDate}
-                    days={days || type === 'week' ? 7 : 1}
+                    days={days || (type === 'week' ? 7 : 1)}
                     dayHeadRender={props.dayHeadRender}
                 />)
         }

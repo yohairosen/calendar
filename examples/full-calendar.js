@@ -38,7 +38,7 @@ function getData(value) {
 
 class Demo extends React.Component {
   state = {
-    type: 'week',
+    type: 'day',
   };
 
   onTypeChange = (type) => {
@@ -52,7 +52,7 @@ class Demo extends React.Component {
   }
 
   dateCellRender = (date, value, index) => {
-    if (index === 1 && date.isSameOrAfter('2018-02-26 13:00', 'minutes') && date.isSameOrBefore('2018-02-26 14:00', 'minutes')) {
+    if (index === 1 && date.isSameOrAfter('2018-04-03 13:00', 'minutes') && date.isSameOrBefore('2018-04-03 14:00', 'minutes')) {
 
       return <div style={{
         background: 'beige',
@@ -67,13 +67,13 @@ class Demo extends React.Component {
       }}>
 <span style={{position: 'absolute', top: 5, left: 5}}>
 
-        {date.isSame('2018-02-26 13:00', 'minutes') ? 'Hair dresser' : ''}
+        {date.isSame('2018-04-03 13:00', 'minutes') ? 'Hair dresser' : ''}
 </span>
 
       </div>
     }
 
-    else if (index === 2 && date.isSameOrAfter('2018-02-26 11:00', 'minutes') && date.isSameOrBefore('2018-02-26 11:30', 'minutes')) {
+    else if (index === 2 && date.isSameOrAfter('2018-04-03 11:00', 'minutes') && date.isSameOrBefore('2018-04-03 11:30', 'minutes')) {
 
       return <div style={{
         background: 'pink',
@@ -88,7 +88,7 @@ class Demo extends React.Component {
       }}>
 <span style={{position: 'absolute', top: 5, left: 5}}>
 
-        {date.isSame('2018-02-26 11:00', 'minutes') ? 'Wax machine' : ''}
+        {date.isSame('2018-04-03 11:00', 'minutes') ? 'Wax machine' : ''}
 </span>
 
       </div>
@@ -114,9 +114,9 @@ class Demo extends React.Component {
           style={{margin: 10}}
           Select={Select}
           fullscreen
-          // days={[moment(), moment(), moment()]}
-          // dayHeadRender={this.headerRender}
-          // timeCellRender={this.dateCellRender}
+            days={[moment(), moment(), moment()]}
+          dayHeadRender={this.headerRender}
+           timeCellRender={this.dateCellRender}
           defaultValue={now}
           onSelect={onSelect}
           type={this.state.type}
