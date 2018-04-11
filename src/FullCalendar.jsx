@@ -148,7 +148,7 @@ console.log(days)
         }
 
         const children = [
-            header,
+            // header,
             (<div key="calendar-body" className={`${prefixCls}-calendar-body`}>
                 {table}
             </div>),

@@ -108,8 +108,7 @@ const TimeTBody = createReactClass({
         const lastDisableClass = `${prefixCls}-disabled-cell-last-of-row`;
 
         const firstDay = value.clone().local();
-        firstDay.startOf('week');
-
+        // firstDay.startOf('week');
 
         let getNextDay = (i) => {
 
