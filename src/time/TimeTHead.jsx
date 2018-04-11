@@ -12,11 +12,23 @@ export default class TimeTHead extends React.Component {
         const veryShortWeekdays = [];
         const weekDays = [];
         const firstDayOfWeek = localeData.firstDayOfWeek();
+        // console.log('first ' + firstDayOfWeek)
         let showWeekNumberEl;
         const now = moment();
+        const days = this.props.days;
+
+        let getNextDay = index => {
+
+            this.getNextDay = Array.isArray(days)  ?
+                index => days[index].day() :
+                index => (firstDayOfWeek + index) % numColumns;
+
+
+            return this.getNextDay(index)
+        }
 
         for (let dateColIndex = 0; dateColIndex < numColumns; dateColIndex++) {
-            const index = (firstDayOfWeek + dateColIndex) % numColumns;
+            const index = getNextDay(dateColIndex);
             now.day(index);
             veryShortWeekdays[dateColIndex] = localeData.weekdaysMin(now);
             weekDays[dateColIndex] = localeData.weekdaysShort(now);

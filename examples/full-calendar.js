@@ -38,7 +38,7 @@ function getData(value) {
 
 class Demo extends React.Component {
   state = {
-    type: 'day',
+    type: 'week',
   };
 
   onTypeChange = (type) => {
@@ -114,7 +114,7 @@ class Demo extends React.Component {
           style={{margin: 10}}
           Select={Select}
           fullscreen
-            days={[moment(), moment(), moment()]}
+            days={[moment()]}
           dayHeadRender={this.headerRender}
            timeCellRender={this.dateCellRender}
           defaultValue={now}
